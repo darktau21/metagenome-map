@@ -1,0 +1,248 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "multiSchema", "postgresqlExtensions", "relationJoins"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+  schemas    = ["area", "metagenome", "sample"]
+}
+
+model Area {
+  id               Int                       @id @default(autoincrement())
+  metagenomeId     Int?                      @map("metagenome_id")
+  coordsId         Int                       @map("coords_id")
+  originalId       String?                   @map("original_id")
+  coords           AreaCoords                @relation(fields: [coordsId], references: [id])
+  metagenome       Metagenome?               @relation(fields: [metagenomeId], references: [id])
+  floatProperties  AreaFloatPropertyValue[]
+  stringProperties AreaStringPropertyValue[]
+
+  @@map("areas")
+  @@schema("area")
+}
+
+model AreaCoords {
+  id      Int                                     @id @default(autoincrement())
+  polygon Unsupported("geography(Polygon, 4326)")
+  areas   Area[]
+
+  @@index([polygon], type: Gist)
+  @@map("coords")
+  @@schema("area")
+}
+
+model AreaStringPropertyValue {
+  id         Int                             @id @default(autoincrement())
+  propertyId Int                             @map("property_id")
+  valueId    Int                             @map("value_id")
+  areaId     Int                             @map("area_id")
+  area       Area                            @relation(fields: [areaId], references: [id])
+  property   AreaStringProperty              @relation(fields: [propertyId], references: [id])
+  value      AreaStringPropertyPossibleValue @relation(fields: [valueId], references: [id])
+
+  @@unique([areaId, propertyId])
+  @@map("string_propertiy_values")
+  @@schema("area")
+}
+
+model AreaStringProperty {
+  id             Int                               @id @default(autoincrement())
+  name           String                            @unique
+  groupId        Int?                              @map("group_id")
+  values         AreaStringPropertyValue[]
+  possibleValues AreaStringPropertyPossibleValue[]
+  group          AreaPropertyGroup?                @relation(fields: [groupId], references: [id])
+
+  @@map("string_properties")
+  @@schema("area")
+}
+
+model AreaStringPropertyPossibleValue {
+  id         Int                       @id @default(autoincrement())
+  value      String
+  propertyId Int                       @map("property_id")
+  values     AreaStringPropertyValue[]
+  property   AreaStringProperty        @relation(fields: [propertyId], references: [id])
+
+  @@unique([propertyId, value])
+  @@map("string_property_possible_values")
+  @@schema("area")
+}
+
+model AreaFloatProperty {
+  id      Int                      @id @default(autoincrement())
+  name    String                   @unique
+  units   String?
+  groupId Int?                     @map("group_id")
+  values  AreaFloatPropertyValue[]
+  group   AreaPropertyGroup?       @relation(fields: [groupId], references: [id])
+
+  @@map("float_properties")
+  @@schema("area")
+}
+
+model AreaFloatPropertyValue {
+  id         Int               @id @default(autoincrement())
+  propertyId Int               @map("property_id")
+  areaId     Int               @map("area_id")
+  value      Float
+  area       Area              @relation(fields: [areaId], references: [id])
+  property   AreaFloatProperty @relation(fields: [propertyId], references: [id])
+
+  @@unique([areaId, propertyId])
+  @@map("float_property_values")
+  @@schema("area")
+}
+
+model AreaPropertyGroup {
+  id               Int                  @id @default(autoincrement())
+  name             String
+  floatProperties  AreaFloatProperty[]
+  stringProperties AreaStringProperty[]
+
+  @@map("property_groups")
+  @@schema("area")
+}
+
+model Phylum {
+  id                   Int                  @id @default(autoincrement())
+  name                 String               @unique
+  metagenomeProperties MetagenomeProperty[]
+
+  @@map("phylums")
+  @@schema("metagenome")
+}
+
+model Metagenome {
+  id         Int                  @id @default(autoincrement())
+  originalId String?              @map("original_id")
+  areas      Area[]
+  diagram    Diagram?
+  properties MetagenomeProperty[]
+
+  @@map("metagenomes")
+  @@schema("metagenome")
+}
+
+model MetagenomeProperty {
+  id           Int        @id @default(autoincrement())
+  phylumId     Int        @map("phylum_id")
+  value        Float
+  metagenomeId Int        @map("metagenome_id")
+  metagenome   Metagenome @relation(fields: [metagenomeId], references: [id])
+  phylum       Phylum     @relation(fields: [phylumId], references: [id])
+
+  @@unique([metagenomeId, phylumId])
+  @@map("phylum_values")
+  @@schema("metagenome")
+}
+
+model Diagram {
+  id           Int        @id @default(autoincrement())
+  content      String
+  metagenomeId Int        @unique @map("metagenome_id")
+  metagenome   Metagenome @relation(fields: [metagenomeId], references: [id])
+
+  @@map("diagrams")
+  @@schema("metagenome")
+}
+
+model Sample {
+  id               Int                         @id @default(autoincrement())
+  selectionDate    DateTime                    @map("selection_date") @db.Date
+  coordsId         Int                         @map("coords_id")
+  originalId       String                      @map("original_id")
+  name             String                      @unique
+  floatProperties  SampleFloatPropertyValue[]
+  coords           SampleCoords                @relation(fields: [coordsId], references: [id])
+  stringProperties SampleStringPropertyValue[]
+
+  @@map("samples")
+  @@schema("sample")
+}
+
+model SampleCoords {
+  id      Int                                   @id @default(autoincrement())
+  point   Unsupported("geography(Point, 4326)")
+  samples Sample[]
+
+  @@index([point], type: Gist)
+  @@map("coords")
+  @@schema("sample")
+}
+
+model SampleStringPropertyValue {
+  id         Int                               @id @default(autoincrement())
+  propertyId Int                               @map("property_id")
+  valueId    Int                               @map("value_id")
+  sampleId   Int                               @map("sample_id")
+  property   SampleStringProperty              @relation(fields: [propertyId], references: [id])
+  sample     Sample                            @relation(fields: [sampleId], references: [id])
+  value      SampleStringPropertyPossibleValue @relation(fields: [valueId], references: [id])
+
+  @@unique([sampleId, propertyId])
+  @@map("string_propertiy_values")
+  @@schema("sample")
+}
+
+model SampleStringProperty {
+  id             Int                                 @id @default(autoincrement())
+  name           String                              @unique
+  groupId        Int?                                @map("group_id")
+  group          SamplePropertyGroup?                @relation(fields: [groupId], references: [id])
+  values         SampleStringPropertyValue[]
+  possibleValues SampleStringPropertyPossibleValue[]
+
+  @@map("string_properties")
+  @@schema("sample")
+}
+
+model SampleStringPropertyPossibleValue {
+  id         Int                         @id @default(autoincrement())
+  value      String
+  propertyId Int                         @map("property_id")
+  values     SampleStringPropertyValue[]
+  property   SampleStringProperty        @relation(fields: [propertyId], references: [id])
+
+  @@unique([propertyId, value])
+  @@map("string_property_possible_values")
+  @@schema("sample")
+}
+
+model SampleFloatProperty {
+  id      Int                        @id @default(autoincrement())
+  name    String                     @unique
+  groupId Int?                       @map("group_id")
+  units   String?
+  group   SamplePropertyGroup?       @relation(fields: [groupId], references: [id])
+  values  SampleFloatPropertyValue[]
+
+  @@map("float_properties")
+  @@schema("sample")
+}
+
+model SampleFloatPropertyValue {
+  id         Int                 @id @default(autoincrement())
+  propertyId Int                 @map("property_id")
+  sampleId   Int                 @map("sample_id")
+  value      Float
+  property   SampleFloatProperty @relation(fields: [propertyId], references: [id])
+  sample     Sample              @relation(fields: [sampleId], references: [id])
+
+  @@unique([sampleId, propertyId])
+  @@map("float_property_values")
+  @@schema("sample")
+}
+
+model SamplePropertyGroup {
+  id               Int                    @id @default(autoincrement())
+  name             String
+  floatProperties  SampleFloatProperty[]
+  stringProperties SampleStringProperty[]
+
+  @@map("property_groups")
+  @@schema("sample")
+}

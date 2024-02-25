@@ -1,0 +1,67 @@
+version: "3.8"
+services:
+  next:
+    container_name: next
+    build:
+      context: .
+      dockerfile: Dockerfile.next
+      target: dev
+    restart: always
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    env_file:
+      - path: ./.env
+        required: true
+    ports:
+      - "5430:5432"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
+    user: root
+    configs:
+      - source: servers.json
+        target: /pgadmin4/servers.json
+      - source: pgpass
+        target: /pgpass
+configs:
+  pgpass:
+    content: db:5432:*:postgre:postgres
+  servers.json:
+    content: |
+      {"Servers": {"1": {
+        "Group": "Servers",
+        "Name": "Metagenome",
+        "Host": "db",
+        "Port": 5432,
+        "MaintenanceDB": "metagenome",
+        "Username": "postgres",
+        "PassFile": "/pgpass",
+        "SSLMode": "prefer"
+      }}}

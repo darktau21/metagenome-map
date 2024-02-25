@@ -1,0 +1,33 @@
+{
+  "plugins": ["perfectionist", "fsd-import", "@ts-safeql/eslint-plugin"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "fsd-import/fsd-relative-path": "error",
+    "fsd-import/public-api-imports": "error",
+    "fsd-import/layer-imports": "error",
+    "@ts-safeql/check-sql": [
+      "error",
+      {
+        "connections": [
+          {
+            "connectionUrl": "postgresql://postgres:postgres@localhost:5430/metagenome",
+            "migrationsDir": "./prisma/migrations",
+            "targets": [
+              {
+                "tag": "prisma.+($queryRaw|$executeRaw)",
+                "transform": "{type}[]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:perfectionist/recommended-natural",
+    "prettier"
+  ]
+}
