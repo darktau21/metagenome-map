@@ -1,3 +1,3 @@
-import dynamic from "next/dynamic";
-
-export const Map = dynamic(() => import("./ui/map"), { ssr: false });
+export { Map } from './ui/map';
+export type { AreaMapView } from './types';
+export { ClickEventProvider } from './model/click-event-provider';

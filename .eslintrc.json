@@ -7,6 +7,7 @@
     "fsd-import/fsd-relative-path": "error",
     "fsd-import/public-api-imports": "error",
     "fsd-import/layer-imports": "error",
+    "perfectionist/sort-union-types": "off",
     "@ts-safeql/check-sql": [
       "error",
       {
@@ -14,6 +15,7 @@
           {
             "connectionUrl": "postgresql://postgres:postgres@localhost:5430/metagenome",
             "migrationsDir": "./prisma/migrations",
+            "skipTypeAnnotations": true,
             "targets": [
               {
                 "tag": "prisma.+($queryRaw|$executeRaw)",

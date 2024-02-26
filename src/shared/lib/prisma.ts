@@ -1,85 +1,97 @@
 import { PrismaClient } from '@prisma/client';
-import { type LatLngLiteral } from 'leaflet';
-import _ from 'lodash';
+import { polygon, type LatLngLiteral } from 'leaflet';
+
+type AreaPolygonGeoObject = {
+  type: 'Polygon';
+  coordinates: [[lng: number, lat: number]];
+};
+
+type AreaPolygonResponse = {
+  id: number;
+  polygon: string;
+};
+
+type AreaPolygonResult = {
+  id: number;
+  polygon: AreaPolygonGeoObject;
+};
 
 const prismaClientSingleton = () => {
   const prisma = new PrismaClient().$extends({
     model: {
       areaCoords: {
-        async create(data: string) {
-          // if (!_.isEqual(data[0], data.at(-1))) {
-          //   data.push(_.clone(data[0]));
-          // }
+        async create({
+          data,
+        }: {
+          data: LatLngLiteral[];
+        }): Promise<AreaPolygonResult | null> {
+          const polygon = `POLYGON((${data.map(({ lat, lng }) => `${lng} ${lat}`).join(',')}))`;
 
-          // const polygon = `POLYGON((${data
-          //   .map(({ lat, lng }) => `${lng} ${lat}`)
-          //   .join(",")}))`;
-
-          const result = await prisma.$queryRaw<
-            { id: number; st_asgeojson: null | string }[]
-          >`
+          const [result] = await prisma.$queryRaw<AreaPolygonResponse[]>`
               INSERT INTO area.coords (id, polygon)
-              VALUES (DEFAULT, ST_GeomFromText(${data}, 4326)) 
+              VALUES (DEFAULT, ST_GeomFromText(${polygon}, 4326)) 
               ON CONFLICT DO NOTHING
-              RETURNING id, ST_AsGeoJson(polygon);
+              RETURNING id, ST_AsGeoJson(polygon) as polygon;
             `;
 
-          return result[0];
+          if (!result) {
+            return null;
+          }
+
+          return {
+            ...result,
+            polygon: JSON.parse(result.polygon) as AreaPolygonGeoObject,
+          };
         },
 
-        async findFirst(data: string) {
-          // if (!_.isEqual(data[0], data.at(-1))) {
-          //   data.push(_.clone(data[0]));
-          // }
-          // console.log("equals?", _.isEqual(data[0], data.at(-1)));
-
-          // const polygon = `POLYGON((${data
-          //   .map(({ lat, lng }) => `${lng} ${lat}`)
-          //   .join(",")}))`;
-
-          const result = await prisma.$queryRaw<{ id: number }[]>`
-            SELECT id
-            FROM area.coords 
-            WHERE ST_Equals(polygon::geometry, ST_PolygonFromText(${data}, 4326))
+        async findFirst(id: number): Promise<AreaPolygonResult | null> {
+          const [result] = await prisma.$queryRaw<AreaPolygonResponse[]>`
+            SELECT id, ST_AsGeoJson(polygon) as polygon
+            FROM area.coords
+            WHERE ${id} = id
             LIMIT 1;
           `;
 
-          return result[0];
+          if (!result) {
+            return null;
+          }
+
+          return {
+            ...result,
+            polygon: JSON.parse(result.polygon) as AreaPolygonGeoObject,
+          };
+        },
+        async findMany({ take = 3000, skip = 0 } = {}): Promise<
+          AreaPolygonResult[]
+        > {
+          const result = await prisma.$queryRaw<AreaPolygonResponse[]>`
+            SELECT id, ST_AsGeoJson(polygon) as polygon
+            FROM area.coords
+            LIMIT ${take}
+          `;
+
+          const convertedResult = result.map(({ polygon, ...data }) => ({
+            ...data,
+            polygon: JSON.parse(polygon) as AreaPolygonGeoObject,
+          }));
+
+          return convertedResult;
         },
       },
       sampleCoords: {
         async create(data: string) {
-          // if (!_.isEqual(data[0], data.at(-1))) {
-          //   data.push(_.clone(data[0]));
-          // }
-
-          // const polygon = `POLYGON((${data
-          //   .map(({ lat, lng }) => `${lng} ${lat}`)
-          //   .join(",")}))`;
-
-          const result = await prisma.$queryRaw<
-            { id: number; st_asgeojson: null | string }[]
-          >`
+          const result = await prisma.$queryRaw<{ id: number | null }[]>`
               INSERT INTO sample.coords (id, point)
               VALUES (DEFAULT, ST_GeomFromText(${data}, 4326)) 
               ON CONFLICT DO NOTHING
-              RETURNING id, ST_AsGeoJson(point);
+              RETURNING id;
             `;
 
           return result;
         },
 
         async findFirst(data: string) {
-          // if (!_.isEqual(data[0], data.at(-1))) {
-          //   data.push(_.clone(data[0]));
-          // }
-          // console.log("equals?", _.isEqual(data[0], data.at(-1)));
-
-          // const polygon = `POLYGON((${data
-          //   .map(({ lat, lng }) => `${lng} ${lat}`)
-          //   .join(",")}))`;
-
-          const result = await prisma.$queryRaw<{ id: number }[]>`
+          const result = await prisma.$queryRaw<{ id: number | null }[]>`
             SELECT id
             FROM sample.coords
             WHERE ST_Equals(point::geometry, ST_GeomFromText(${data}, 4326))
