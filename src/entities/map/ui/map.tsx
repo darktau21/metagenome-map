@@ -1,26 +1,28 @@
+import type { LatLng } from '@/shared/types';
+import type { PropsWithChildren, ReactNode } from 'react';
+
 import { UIMapContainer } from '@/shared/ui';
 import { type LatLngLiteral } from 'leaflet';
 
-import { TILE_SERVER_URL } from '../constants';
 import type { AreaMapView } from '../types';
-import type { PropsWithChildren, ReactNode } from 'react';
-import type { LatLng } from '@/shared/types';
+
+import { TILE_SERVER_URL } from '../constants';
 
 type MapProps = Readonly<
   PropsWithChildren<{
-    position?: LatLng;
-    zoom?: number;
     areas: AreaMapView[];
+    position?: LatLng;
     renderArea: (area: AreaMapView, index?: number) => ReactNode;
+    zoom?: number;
   }>
 >;
 
 export function Map({
-  position = [0, 0],
-  zoom = 10,
-  children,
   areas,
+  children,
+  position = [0, 0],
   renderArea: renderAreas,
+  zoom = 10,
 }: MapProps) {
   return (
     <UIMapContainer

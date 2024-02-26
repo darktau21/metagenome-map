@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { polygon, type LatLngLiteral } from 'leaflet';
+import { type LatLngLiteral, polygon } from 'leaflet';
 
 type AreaPolygonGeoObject = {
-  type: 'Polygon';
   coordinates: [[lng: number, lat: number]];
+  type: 'Polygon';
 };
 
 type AreaPolygonResponse = {
@@ -61,7 +61,7 @@ const prismaClientSingleton = () => {
             polygon: JSON.parse(result.polygon) as AreaPolygonGeoObject,
           };
         },
-        async findMany({ take = 3000, skip = 0 } = {}): Promise<
+        async findMany({ skip = 0, take = 3000 } = {}): Promise<
           AreaPolygonResult[]
         > {
           const result = await prisma.$queryRaw<AreaPolygonResponse[]>`
@@ -80,7 +80,7 @@ const prismaClientSingleton = () => {
       },
       sampleCoords: {
         async create(data: string) {
-          const result = await prisma.$queryRaw<{ id: number | null }[]>`
+          const result = await prisma.$queryRaw<{ id: null | number }[]>`
               INSERT INTO sample.coords (id, point)
               VALUES (DEFAULT, ST_GeomFromText(${data}, 4326)) 
               ON CONFLICT DO NOTHING
@@ -91,7 +91,7 @@ const prismaClientSingleton = () => {
         },
 
         async findFirst(data: string) {
-          const result = await prisma.$queryRaw<{ id: number | null }[]>`
+          const result = await prisma.$queryRaw<{ id: null | number }[]>`
             SELECT id
             FROM sample.coords
             WHERE ST_Equals(point::geometry, ST_GeomFromText(${data}, 4326))

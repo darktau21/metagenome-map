@@ -1,4 +1,5 @@
 import type { LatLng } from '@/shared/types';
+
 import formatcoords from 'formatcoords';
 import { Popup } from 'react-leaflet';
 

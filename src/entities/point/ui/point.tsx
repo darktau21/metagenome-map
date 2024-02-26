@@ -1,25 +1,26 @@
 import type { LatLng } from '@/shared/types';
-import { divIcon, type Marker as TMarker } from 'leaflet';
-import { useRef, type PropsWithChildren, type ReactNode } from 'react';
+
+import { type Marker as TMarker, divIcon } from 'leaflet';
+import { type PropsWithChildren, type ReactNode, useRef } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Marker, Popup } from 'react-leaflet';
 
 type IconProps = Readonly<{
-  component: ReactNode;
-  iconSize: [width: number, height: number];
   className?: string;
+  component: ReactNode;
   iconAnchor?: [x: number, y: number];
-  tooltipAnchor?: [x: number, y: number];
+  iconSize: [width: number, height: number];
   popupAnchor?: [x: number, y: number];
+  tooltipAnchor?: [x: number, y: number];
 }>;
 
 type PointProps = Readonly<{
   icon: IconProps;
-  position: LatLng;
   popupContent?: ReactNode;
+  position: LatLng;
 }>;
 
-export function Point({ icon, position, popupContent }: PointProps) {
+export function Point({ icon, popupContent, position }: PointProps) {
   const markerRef = useRef<TMarker>(null);
   const handleOpen = () => {
     markerRef.current?.openPopup();
@@ -31,12 +32,6 @@ export function Point({ icon, position, popupContent }: PointProps) {
 
   return (
     <Marker
-      ref={markerRef}
-      position={position}
-      icon={divIcon({
-        ...icon,
-        html: renderToStaticMarkup(icon.component),
-      })}
       eventHandlers={
         popupContent
           ? {
@@ -45,6 +40,12 @@ export function Point({ icon, position, popupContent }: PointProps) {
             }
           : {}
       }
+      icon={divIcon({
+        ...icon,
+        html: renderToStaticMarkup(icon.component),
+      })}
+      position={position}
+      ref={markerRef}
     >
       {popupContent ? <Popup autoClose>{popupContent}</Popup> : null}
     </Marker>

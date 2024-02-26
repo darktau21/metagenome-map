@@ -1,4 +1,5 @@
 import type { LeafletMouseEventHandlerFn } from 'leaflet';
+
 import { memo } from 'react';
 import { useMapEvents } from 'react-leaflet';
 

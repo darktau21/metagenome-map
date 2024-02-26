@@ -1,7 +1,8 @@
-import { ClickEventProvider } from '@/entities/map';
 import type { LatLng } from '@/shared/types';
 import type { LeafletMouseEventHandlerFn } from 'leaflet';
-import { useCallback, useState, type ReactNode } from 'react';
+
+import { ClickEventProvider } from '@/entities/map';
+import { type ReactNode, useCallback, useState } from 'react';
 
 type ShowClickCoordsProps = Readonly<{
   renderPopup: (coords: LatLng) => ReactNode;
@@ -24,8 +25,8 @@ export function ShowClickCoords({ renderPopup }: ShowClickCoordsProps) {
   return (
     <>
       <ClickEventProvider
-        handleRightClick={handleRightClick}
         handleLeftClick={handleLeftClick}
+        handleRightClick={handleRightClick}
       />
       {coords ? renderPopup(coords) : null}
     </>
