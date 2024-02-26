@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { type LatLngLiteral, polygon } from 'leaflet';
+import { type LatLngLiteral } from 'leaflet';
 
 type AreaPolygonGeoObject = {
-  coordinates: [[lng: number, lat: number]];
+  coordinates: [[lng: number, lat: number][]];
   type: 'Polygon';
 };
 
