@@ -1,8 +1,9 @@
 'use client';
 
-import { type AreaMapView, Map } from '@/entities/map';
+import { AreaPolygon } from '@/entities/area';
+import { type AreaMapView, Map, SyncCoordsQuery } from '@/entities/map';
 import { CoordsPopup, ShowClickCoords } from '@/features/show-click-coords';
-import { Polygon } from 'react-leaflet';
+import { memo } from 'react';
 
 import { INITIAL_POSITION, INITIAL_ZOOM } from './constants';
 
@@ -10,17 +11,21 @@ type MapWidgetProps = Readonly<{
   areas: AreaMapView[];
 }>;
 
-export default function MapWidget({ areas }: MapWidgetProps) {
+const MapWidget = memo(function MapWidget({ areas }: MapWidgetProps) {
   return (
     <Map
       areas={areas}
-      position={INITIAL_POSITION}
-      renderArea={(area) => <Polygon key={area.id} positions={area.polygon} />}
+      renderArea={({ id, polygon }) => (
+        <AreaPolygon coords={polygon} id={id} key={id} />
+      )}
       zoom={INITIAL_ZOOM}
     >
       <ShowClickCoords
         renderPopup={(coords) => <CoordsPopup coords={coords} />}
       />
+      <SyncCoordsQuery initialPosition={INITIAL_POSITION} />
     </Map>
   );
-}
+});
+
+export default MapWidget;

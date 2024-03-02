@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { type LatLngLiteral } from 'leaflet';
 
 type AreaPolygonGeoObject = {
@@ -19,6 +19,32 @@ type AreaPolygonResult = {
 const prismaClientSingleton = () => {
   const prisma = new PrismaClient().$extends({
     model: {
+      area: {
+        async findEqualCoords<T extends Prisma.AreaFindManyArgs>(
+          id: number,
+          args?: T,
+        ) {
+          const { where: whereArg } = args ?? {};
+          const { coords_id: coordsId } = (
+            await prisma.$queryRaw<[{ coords_id: number }]>`
+              SELECT coords_id
+              FROM area.areas
+              WHERE id = ${id}
+          `
+          )[0];
+
+          return prisma.area.findMany({
+            ...args,
+            where: {
+              ...whereArg,
+              NOT: {
+                id,
+              },
+              coordsId,
+            },
+          });
+        },
+      },
       areaCoords: {
         async create({
           data,

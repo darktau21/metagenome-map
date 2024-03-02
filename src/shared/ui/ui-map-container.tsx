@@ -2,22 +2,26 @@
 
 import type { Map } from 'leaflet';
 
+import clsx from 'clsx';
 import 'leaflet/dist/leaflet.css';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { MapContainer, type MapContainerProps, TileLayer } from 'react-leaflet';
 
 type UIMapContainerProps = Readonly<
   { tileServerUrl: string } & MapContainerProps
 >;
 
-export const UIMapContainer = forwardRef<Map, UIMapContainerProps>(
-  function UIMapContainer({ children, tileServerUrl, ...props }, ref) {
+const UIMapContainer = forwardRef<Map, UIMapContainerProps>(
+  function UIMapContainer(
+    { children, className, tileServerUrl, ...props },
+    ref,
+  ) {
     return (
       <MapContainer
         attributionControl={false}
+        className={clsx(className, 'min-h-full h-full col-span-full')}
         ref={ref}
         {...props}
-        className={'h-dvh'}
       >
         <TileLayer url={tileServerUrl} />
         {children}
@@ -25,3 +29,5 @@ export const UIMapContainer = forwardRef<Map, UIMapContainerProps>(
     );
   },
 );
+
+export default UIMapContainer;

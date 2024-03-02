@@ -1,8 +1,7 @@
 import type { LatLng } from '@/shared/types';
-import type { PropsWithChildren, ReactNode } from 'react';
 
 import { UIMapContainer } from '@/shared/ui';
-import { type LatLngLiteral } from 'leaflet';
+import { type PropsWithChildren, type ReactNode } from 'react';
 
 import type { AreaMapView } from '../types';
 

@@ -1,6 +1,6 @@
-import type { LatLngTuple } from 'leaflet';
+import type { LatLng } from '@/shared/types';
 
 export type AreaMapView = {
   id: number;
-  polygon: LatLngTuple[];
+  polygon: LatLng[];
 };

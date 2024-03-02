@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  eslint: {
+    dirs: ['src'],
+  },
+  output: 'standalone',
 };
 
 export default nextConfig;
