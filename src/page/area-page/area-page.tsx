@@ -14,7 +14,7 @@ export async function AreaPage({ params }: AreaPageProps) {
     <Suspense fallback={<UICardSkeleton />}>
       <AreaLoader id={+id}>
         {(area, duplicates) => (
-          <>
+          <div className="col-start-2 col-end-6">
             <AreaCard area={area} />
             {duplicates ? (
               <>
@@ -26,7 +26,7 @@ export async function AreaPage({ params }: AreaPageProps) {
                 ))}
               </>
             ) : null}
-          </>
+          </div>
         )}
       </AreaLoader>
     </Suspense>

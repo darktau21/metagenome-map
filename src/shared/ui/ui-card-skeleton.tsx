@@ -1,8 +1,9 @@
+'use client';
+
 import Skeleton from 'react-loading-skeleton';
 
-import { UIList, UIListItem } from '.';
+import { UIHeading, UIList, UIListItem } from '.';
 import { UICard } from './ui-card';
-import { UIHeading } from './ui-heading';
 
 export function UICardSkeleton() {
   return (

@@ -1,4 +1,1 @@
-import dynamic from 'next/dynamic';
-
-export const MapWidget = dynamic(() => import('./map-widget'), { ssr: false });
-// export { MapWidget } from './map-widget';
+export { MapWidget } from './lazy-loading';

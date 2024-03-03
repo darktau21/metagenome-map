@@ -1,4 +1,5 @@
-import { getSample } from '@/entities/sample';
+import { SampleLoader } from '@/entities/sample';
+import { SampleCard } from '@/widgets/sample-card';
 
 type SamplePageProps = Readonly<{
   params: Record<'id', string>;
@@ -6,6 +7,10 @@ type SamplePageProps = Readonly<{
 
 export async function SamplePage({ params }: SamplePageProps) {
   const { id } = params;
-  const sample = await getSample(+id);
-  return <div>test</div>;
+
+  return (
+    <SampleLoader id={+id}>
+      {(sample) => <SampleCard sample={sample} />}
+    </SampleLoader>
+  );
 }

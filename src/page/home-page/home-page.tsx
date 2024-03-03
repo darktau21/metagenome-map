@@ -1,21 +1,12 @@
 import { AreaCoordsLoader } from '@/entities/area';
 import { SamplesCoordsLoader } from '@/entities/sample';
+import { UIMapSkeleton } from '@/shared/ui';
 import { MapWidget } from '@/widgets/map';
 import { Suspense } from 'react';
-import Skeleton from 'react-loading-skeleton';
 
-export async function HomePage() {
+export function HomePage() {
   return (
-    <Suspense
-      fallback={
-        <Skeleton
-          baseColor="#e2e2e2"
-          borderRadius={0}
-          className="block w-full h-full"
-          containerClassName="block w-full h-full col-span-full"
-        />
-      }
-    >
+    <Suspense fallback={<UIMapSkeleton />}>
       <AreaCoordsLoader>
         {(areas) => (
           <SamplesCoordsLoader>

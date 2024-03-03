@@ -1,26 +1,48 @@
-import type { Area } from '@/entities/area/types';
+import type { Sample } from '@/entities/sample';
 
-import { PropValueItem, PropValueList } from '@/entities/property';
+import {
+  GroupedPropValueList,
+  PropValueItem,
+  PropValueList,
+} from '@/entities/property';
 import { UICard, UIHeading } from '@/shared/ui';
 
-type AreaCardProps = Readonly<{
-  area: Area;
+type SampleCardProps = Readonly<{
+  sample: Sample;
 }>;
 
-export function SampleCard({ area }: AreaCardProps) {
-  const { id, metagenomeId, properties } = area;
+export function SampleCard({ sample }: SampleCardProps) {
+  const { id, name, properties: groupedProperties, selectionDate } = sample;
+
   return (
     <UICard>
-      <UIHeading>Территория #{id}</UIHeading>
+      <UIHeading>Образец #{id}</UIHeading>
+      <PropValueItem name={'Имя'} value={name} />
+      <PropValueItem
+        name={'Дата выборки'}
+        value={selectionDate.toLocaleDateString()}
+      />
       <UIHeading as="h2">Свойства</UIHeading>
-      {properties ? (
-        <PropValueList
-          props={properties}
-          renderProp={({ name, value }) => (
-            <PropValueItem name={name} value={value} />
+      {groupedProperties ? (
+        <GroupedPropValueList
+          groupedProperties={groupedProperties}
+          renderGroupName={(groupName) => <UIHeading>{groupName}</UIHeading>}
+          renderGroupedProperties={(properties) => (
+            <PropValueList
+              props={properties}
+              renderProp={({ name, value }) => (
+                <PropValueItem name={name} value={value} />
+              )}
+            />
           )}
         />
-      ) : null}
+      ) : // <PropValueList
+      //   props={properties}
+      //   renderProp={({ name, value }) => (
+      //     <PropValueItem name={name} value={value} />
+      //   )}
+      // />
+      null}
     </UICard>
   );
 }

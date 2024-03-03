@@ -1,5 +1,3 @@
-'use server';
-
 import { type ReactNode } from 'react';
 
 import type { SampleCoords } from '../types';
@@ -10,7 +8,9 @@ type SamplesCoordsLoaderProps = Readonly<{
   children: (areas: SampleCoords[]) => ReactNode;
 }>;
 
-export async function SamplesCoordsLoader({ children }: SamplesCoordsLoaderProps) {
+export async function SamplesCoordsLoader({
+  children,
+}: SamplesCoordsLoaderProps) {
   const samplesCoords = await getSamplesCoords();
   return <>{children(samplesCoords)}</>;
 }

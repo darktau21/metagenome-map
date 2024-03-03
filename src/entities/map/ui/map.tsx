@@ -1,7 +1,7 @@
 import type { LatLng } from '@/shared/types';
 
 import { UIMapContainer } from '@/shared/ui';
-import { type PropsWithChildren, type ReactNode } from 'react';
+import { type PropsWithChildren, type ReactNode, Suspense } from 'react';
 
 import type { AreaMapView, SampleMapView } from '../types';
 

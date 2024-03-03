@@ -22,7 +22,7 @@ export function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${inter.className} antialiased overflow-hidden`}>
+      <body className={`${inter.className} antialiased`}>
         <UILayout menu={<NavMenu />}>{children}</UILayout>
         {modal}
         <div id="modal-container" />
