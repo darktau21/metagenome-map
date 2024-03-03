@@ -18,6 +18,7 @@ export function SyncCoordsQuery({ initialPosition }: SyncCoordsQueryProps) {
 
   useEffect(() => {
     map.setView(coords as LatLngExpression);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

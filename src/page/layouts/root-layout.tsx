@@ -6,8 +6,6 @@ import { NavMenu } from '@/widgets/nav-menu';
 import { Inter } from 'next/font/google';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import './globals.css';
-
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
 
 export const metadata: Metadata = {
@@ -15,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Метагеномная карта Ростовской области',
 };
 
-export default async function RootLayout({
+export function RootLayout({
   children,
   modal,
 }: Readonly<{

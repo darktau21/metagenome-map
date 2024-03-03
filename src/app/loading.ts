@@ -1,1 +1,1 @@
-export { LoadingPage as default } from '@/pages/loading-page';
+export { LoadingPage as default } from '@/page/loading-page';

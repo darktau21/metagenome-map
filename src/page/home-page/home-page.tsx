@@ -1,9 +1,10 @@
 import { AreaCoordsLoader } from '@/entities/area';
+import { SamplesCoordsLoader } from '@/entities/sample';
 import { MapWidget } from '@/widgets/map';
 import { Suspense } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
-export function HomePage() {
+export async function HomePage() {
   return (
     <Suspense
       fallback={
@@ -16,7 +17,11 @@ export function HomePage() {
       }
     >
       <AreaCoordsLoader>
-        {(areas) => <MapWidget areas={areas} />}
+        {(areas) => (
+          <SamplesCoordsLoader>
+            {(samples) => <MapWidget areas={areas} samples={samples} />}
+          </SamplesCoordsLoader>
+        )}
       </AreaCoordsLoader>
     </Suspense>
   );

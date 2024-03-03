@@ -2,6 +2,7 @@
 
 import type { LatLng } from '@/shared/types';
 
+import { Routes } from '@/shared/routes';
 import { useRouter } from 'next/navigation';
 import { Polygon } from 'react-leaflet';
 
@@ -16,9 +17,8 @@ export function AreaPolygon({ coords, id }: AreaPolygonProps) {
   return (
     <Polygon
       eventHandlers={{
-        click: (event) => {
-          console.log(id);
-          router.push(`/areas/${id}`);
+        click: () => {
+          router.push(`${Routes.AREAS}/${id}`);
         },
       }}
       positions={coords}

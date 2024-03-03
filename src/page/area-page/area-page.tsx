@@ -1,14 +1,13 @@
-import { AreaLoader, areaActions } from '@/entities/area';
-import { PropValueList } from '@/entities/property/ui/prop-value-list';
-import { UICardSkeleton, UIHeading, UIList } from '@/shared/ui';
+import { AreaLoader } from '@/entities/area';
+import { UICardSkeleton, UIHeading } from '@/shared/ui';
 import { AreaCard } from '@/widgets/area-card';
 import { Suspense } from 'react';
 
-type AreaPageProps = {
+type AreaPageProps = Readonly<{
   params: Record<'id', string>;
-};
+}>;
 
-export function AreaPage({ params }: AreaPageProps) {
+export async function AreaPage({ params }: AreaPageProps) {
   const { id } = params;
 
   return (

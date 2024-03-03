@@ -1,8 +1,10 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { type LatLngLiteral } from 'leaflet';
 
+type Point = [lng: number, lat: number];
+
 type AreaPolygonGeoObject = {
-  coordinates: [[lng: number, lat: number][]];
+  coordinates: [Point[]];
   type: 'Polygon';
 };
 
@@ -14,6 +16,21 @@ type AreaPolygonResponse = {
 type AreaPolygonResult = {
   id: number;
   polygon: AreaPolygonGeoObject;
+};
+
+type SamplePointGeoObject = {
+  coordinates: Point;
+  type: 'Point';
+};
+
+type SamplePointResponse = {
+  id: number;
+  point: string;
+};
+
+type SamplePointResult = {
+  id: number;
+  point: SamplePointGeoObject;
 };
 
 const prismaClientSingleton = () => {
@@ -94,6 +111,7 @@ const prismaClientSingleton = () => {
             SELECT id, ST_AsGeoJson(polygon) as polygon
             FROM area.coords
             LIMIT ${take}
+            OFFSET ${skip}
           `;
 
           const convertedResult = result.map(({ polygon, ...data }) => ({
@@ -106,7 +124,7 @@ const prismaClientSingleton = () => {
       },
       sampleCoords: {
         async create(data: string) {
-          const result = await prisma.$queryRaw<{ id: null | number }[]>`
+          const result = await prisma.$queryRaw<SamplePointResponse[]>`
               INSERT INTO sample.coords (id, point)
               VALUES (DEFAULT, ST_GeomFromText(${data}, 4326)) 
               ON CONFLICT DO NOTHING
@@ -117,7 +135,7 @@ const prismaClientSingleton = () => {
         },
 
         async findFirst(data: string) {
-          const result = await prisma.$queryRaw<{ id: null | number }[]>`
+          const result = await prisma.$queryRaw<SamplePointResponse[]>`
             SELECT id
             FROM sample.coords
             WHERE ST_Equals(point::geometry, ST_GeomFromText(${data}, 4326))
@@ -125,6 +143,23 @@ const prismaClientSingleton = () => {
           `;
 
           return result[0];
+        },
+        async findMany({ skip = 0, take = 3000 } = {}): Promise<
+          SamplePointResult[]
+        > {
+          const result = await prisma.$queryRaw<SamplePointResponse[]>`
+            SELECT id, ST_AsGeoJson(point) as point
+            FROM sample.coords
+            LIMIT ${take}
+            OFFSET ${skip}
+          `;
+
+          const convertedResult = result.map(({ point, ...data }) => ({
+            ...data,
+            point: JSON.parse(point) as SamplePointGeoObject,
+          }));
+
+          return convertedResult;
         },
       },
     },

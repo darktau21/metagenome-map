@@ -5,7 +5,6 @@ README.md
 .next
 .git
 npm-debug.log
-mssql
 postgres
 .gitignore
 docker-compose.yml

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import {
-  type KeyboardEventHandler,
   type MouseEventHandler,
   type PropsWithChildren,
   useEffect,
@@ -25,7 +24,6 @@ export function UIModal({ children }: UIModalProps) {
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent): void => {
-      console.log(e);
       if (e.key === 'Escape') {
         router.back();
       }
