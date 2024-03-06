@@ -56,7 +56,7 @@ export function UIModal({ children }: UIModalProps) {
       onClick={handleClick}
       ref={bodyRef}
     >
-      <div className="h-full bg-slate-100 rounded-lg shadow-lg px-12 scroll-m-2 overflow-auto cursor-auto">
+      <div className="h-full bg-slate-100 scrollbar-thin rounded-lg shadow-lg px-12 overflow-auto cursor-auto">
         {children}
       </div>
     </motion.div>,

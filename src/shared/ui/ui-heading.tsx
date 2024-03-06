@@ -5,7 +5,7 @@ import { type PropsWithChildren } from 'react';
 
 type UIHeadingProps = Readonly<
   PropsWithChildren<{
-    as?: 'h1' | 'h2';
+    as?: 'h1' | 'h2' | 'h3';
     classNames?: string;
   }>
 >;
@@ -23,6 +23,10 @@ export function UIHeading({ as = 'h1', children, classNames }: UIHeadingProps) {
         <h2 className={clsx(classes, 'font-semibold', classNames)}>
           {children}
         </h2>
+      );
+    case 'h3':
+      return (
+        <h3 className={clsx(classes, 'font-medium', classNames)}>{children}</h3>
       );
   }
 }

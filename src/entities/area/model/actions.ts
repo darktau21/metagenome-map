@@ -3,7 +3,12 @@
 import type { LatLng } from '@/shared/types';
 import type { Result } from '@prisma/client/runtime/library';
 
-import { prisma } from '@/shared/lib';
+import {
+  type FloatProperty,
+  type StringProperty,
+  convertProperties,
+  prisma,
+} from '@/shared/lib';
 import { type Prisma } from '@prisma/client';
 
 import type { Area } from '../types';
@@ -13,7 +18,13 @@ const select = {
     select: {
       property: {
         select: {
+          group: {
+            select: {
+              name: true,
+            },
+          },
           name: true,
+          units: true,
         },
       },
       value: true,
@@ -25,6 +36,9 @@ const select = {
     select: {
       property: {
         select: {
+          group: {
+            select: { name: true },
+          },
           name: true,
         },
       },
@@ -38,36 +52,17 @@ const select = {
 } satisfies Prisma.AreaSelect;
 
 function convertAreaData(area: {
-  floatProperties: {
-    property: {
-      name: string;
-    };
-    value: number;
-  }[];
+  floatProperties: FloatProperty[];
   id: number;
   metagenomeId: null | number;
-  stringProperties: {
-    property: {
-      name: string;
-    };
-    value: {
-      value: string;
-    };
-  }[];
+  stringProperties: StringProperty[];
 }) {
   const { floatProperties, id, metagenomeId, stringProperties } = area;
-
-  const convertedFloatProperties = floatProperties.map(
-    ({ property, value }) => ({ name: property.name, value }),
-  );
-  const convertedStringProperties = stringProperties.map(
-    ({ property, value }) => ({ name: property.name, value: value.value }),
-  );
 
   return {
     id,
     metagenomeId,
-    properties: [...convertedFloatProperties, ...convertedStringProperties],
+    properties: convertProperties([...floatProperties, ...stringProperties]),
   };
 }
 

@@ -2,38 +2,8 @@
 
 import type { LatLng } from '@/shared/types';
 
-import { prisma } from '@/shared/lib';
-
-type Property =
-  | {
-      name: string;
-      units: null | string;
-      value: number;
-    }
-  | {
-      name: string;
-      value: string;
-    };
-
-type FloatProperty = {
-  property: {
-    group: {
-      name: string;
-    } | null;
-    name: string;
-    units: null | string;
-  };
-  value: number;
-};
-
-type StringProperty = {
-  property: { group: { name: string } | null; name: string };
-  value: { value: string };
-};
-
-const isFloatProperty = (
-  property: FloatProperty | StringProperty,
-): property is FloatProperty => typeof property.value === 'number';
+import { type StringProperty, prisma } from '@/shared/lib';
+import { type FloatProperty, convertProperties } from '@/shared/lib';
 
 function convertSampleData(sample: {
   floatProperties: FloatProperty[];
@@ -43,34 +13,11 @@ function convertSampleData(sample: {
   stringProperties: StringProperty[];
 }) {
   const { floatProperties, id, name, selectionDate, stringProperties } = sample;
-  const propertyGroups = new Map<null | string, Property[]>();
-  const properties = [...floatProperties, ...stringProperties];
-
-  properties.forEach((item) => {
-    const groupName = item.property.group?.name ?? null;
-
-    if (!propertyGroups.has(groupName)) {
-      propertyGroups.set(groupName, []);
-    }
-
-    if (isFloatProperty(item)) {
-      propertyGroups.get(groupName)?.push({
-        name: item.property.name,
-        units: item.property.units,
-        value: item.value,
-      });
-    } else {
-      propertyGroups.get(groupName)?.push({
-        name: item.property.name,
-        value: item.value.value,
-      });
-    }
-  });
 
   return {
     id,
     name,
-    properties: Object.fromEntries(propertyGroups),
+    properties: convertProperties([...floatProperties, ...stringProperties]),
     selectionDate,
   };
 }

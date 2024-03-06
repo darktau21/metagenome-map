@@ -7,6 +7,7 @@ import { UIMarker } from '@/shared/ui';
 import { divIcon } from 'leaflet';
 import { useRouter } from 'next/navigation';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 import { Marker } from 'react-leaflet';
 
 type SamplePointProps = Readonly<{

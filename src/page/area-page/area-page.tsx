@@ -1,4 +1,5 @@
 import { AreaLoader } from '@/entities/area';
+import { getMetagenome, searchPhylum } from '@/entities/metagenome';
 import { UICardSkeleton, UIHeading } from '@/shared/ui';
 import { AreaCard } from '@/widgets/area-card';
 import { Suspense } from 'react';

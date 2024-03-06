@@ -5,7 +5,7 @@ import {
   PropValueItem,
   PropValueList,
 } from '@/entities/property';
-import { UICard, UIHeading } from '@/shared/ui';
+import { UIAccordion, UICard, UIHeading } from '@/shared/ui';
 
 type SampleCardProps = Readonly<{
   sample: Sample;
@@ -20,29 +20,27 @@ export function SampleCard({ sample }: SampleCardProps) {
       <PropValueItem name={'Имя'} value={name} />
       <PropValueItem
         name={'Дата выборки'}
-        value={selectionDate.toLocaleDateString()}
+        value={selectionDate.toLocaleDateString('ru')}
       />
       <UIHeading as="h2">Свойства</UIHeading>
       {groupedProperties ? (
         <GroupedPropValueList
           groupedProperties={groupedProperties}
-          renderGroupName={(groupName) => <UIHeading>{groupName}</UIHeading>}
-          renderGroupedProperties={(properties) => (
-            <PropValueList
-              props={properties}
-              renderProp={({ name, value }) => (
-                <PropValueItem name={name} value={value} />
-              )}
-            />
+          renderGroupedProperties={(groupName, properties) => (
+            <UIAccordion title={<UIHeading as="h3">{groupName}</UIHeading>}>
+              <PropValueList
+                props={properties}
+                renderProp={({ name, units, value }) => (
+                  <PropValueItem
+                    name={name}
+                    value={`${value} ${units ?? ''}`}
+                  />
+                )}
+              />
+            </UIAccordion>
           )}
         />
-      ) : // <PropValueList
-      //   props={properties}
-      //   renderProp={({ name, value }) => (
-      //     <PropValueItem name={name} value={value} />
-      //   )}
-      // />
-      null}
+      ) : null}
     </UICard>
   );
 }
