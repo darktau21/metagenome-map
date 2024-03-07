@@ -9,8 +9,11 @@ export type AreaProp = {
 export type AreaPropGroups = Record<string, AreaProp[]>;
 
 export type AreaCoords = {
+  fillColor?: string;
   id: number;
+  phylumId?: number;
   polygon: LatLng[];
+  value?: number;
 };
 
 export type Area = {

@@ -1,6 +1,6 @@
 'use client';
 
-import { PhylumSearchInput } from '@/features/show-metagenome-map';
+import { PhylumSearchInput } from '@/features/select-metagenome-map';
 import { Routes } from '@/shared/routes';
 import { UINavLink, UINavMenu, UINavMenuItem } from '@/shared/ui';
 import { usePathname } from 'next/navigation';

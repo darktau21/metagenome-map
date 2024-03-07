@@ -121,6 +121,26 @@ const prismaClientSingleton = () => {
 
           return convertedResult;
         },
+        async findManyWithPhylum(phylumId: number) {
+          const result = await prisma.$queryRaw<
+            (AreaPolygonResponse & { phylumId: number; value: number })[]
+          >`
+            SELECT c.id as id, ST_AsGeoJson(polygon) as polygon, v.value as value, v.phylum_id as phylumId
+            FROM area.coords c
+            JOIN area.areas a on c.id = a.coords_id
+            JOIN metagenome.metagenomes m on a.metagenome_id = m.id
+            JOIN metagenome.phylum_values v on m.id = v.metagenome_id
+            WHERE v.phylum_id = ${phylumId}
+            ORDER BY v.value
+          `;
+
+          const convertedResult = result.map(({ polygon, ...data }) => ({
+            ...data,
+            polygon: JSON.parse(polygon) as AreaPolygonGeoObject,
+          }));
+
+          return convertedResult;
+        },
       },
       sampleCoords: {
         async create(data: string) {

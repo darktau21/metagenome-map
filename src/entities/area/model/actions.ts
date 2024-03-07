@@ -7,6 +7,7 @@ import {
   type FloatProperty,
   type StringProperty,
   convertProperties,
+  getGradientMap,
   prisma,
 } from '@/shared/lib';
 import { type Prisma } from '@prisma/client';
@@ -66,10 +67,30 @@ function convertAreaData(area: {
   };
 }
 
+export async function getAreaCoordsWithPhylum(phylumId: number) {
+  const areaCoords = await prisma.areaCoords.findManyWithPhylum(phylumId);
+  const phylumValuesDistinct = await prisma.metagenomeProperty.findMany({
+    distinct: ['value'],
+    select: { id: true, value: true },
+    where: { phylumId },
+  });
+
+  const gradient = getGradientMap(
+    phylumValuesDistinct.map(({ value }) => value),
+  );
+  const convertedAreaCoords = areaCoords.map(({ polygon, value, ...data }) => ({
+    ...data,
+    fillColor: gradient[value],
+    polygon: polygon.coordinates[0].map(([lng, lat]) => [lat, lng] as LatLng),
+    value,
+  }));
+  return convertedAreaCoords;
+}
+
 export async function getAreaCoords() {
   const areaCoords = await prisma.areaCoords.findMany();
   const convertedAreaCoords = areaCoords.map(({ id, polygon }) => ({
-    id: id,
+    id,
     polygon: polygon.coordinates[0].map(([lng, lat]) => [lat, lng] as LatLng),
   }));
 

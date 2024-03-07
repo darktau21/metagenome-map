@@ -11,5 +11,7 @@ export { UIMarker } from './ui-marker';
 export { UIModal } from './ui-modal';
 export { UINavLink } from './ui-nav-link';
 export { UINavMenu, UINavMenuItem } from './ui-nav-menu';
-export { UISearchInput } from './ui-search-input';
+export { UISearchInput } from './ui-search-input/ui-search-input';
 export { UISpinnerIcon } from './ui-spinner-icon';
+export { UITooltip } from './ui-tooltip';
+export * from './ui-search-input';

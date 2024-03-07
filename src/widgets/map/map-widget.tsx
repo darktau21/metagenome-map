@@ -22,8 +22,8 @@ const MapWidget = memo(function MapWidget({ areas, samples }: MapWidgetProps) {
   return (
     <Map
       areas={areas}
-      renderArea={({ id, polygon }) => (
-        <AreaPolygon coords={polygon} id={id} key={id} />
+      renderArea={({ fillColor, id, polygon }, i) => (
+        <AreaPolygon coords={polygon} fillColor={fillColor} id={id} key={i} />
       )}
       renderSample={({ id, point }) => (
         <SamplePoint coords={point} id={id} key={id} />

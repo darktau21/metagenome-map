@@ -8,7 +8,6 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { createPortal } from 'react-dom';
 
 type UIModalProps = Readonly<PropsWithChildren>;
 
@@ -36,7 +35,7 @@ export function UIModal({ children }: UIModalProps) {
     };
   });
 
-  return createPortal(
+  return (
     <motion.div
       animate={{
         height: '100dvh',
@@ -59,7 +58,6 @@ export function UIModal({ children }: UIModalProps) {
       <div className="h-full bg-slate-100 scrollbar-thin rounded-lg shadow-lg px-12 overflow-auto cursor-auto">
         {children}
       </div>
-    </motion.div>,
-    document.getElementById('modal-container')!,
+    </motion.div>
   );
 }

@@ -8,12 +8,13 @@ import { Polygon } from 'react-leaflet';
 
 type AreaPolygonProps = {
   coords: LatLng[];
+  fillColor?: string;
   id: number;
 };
 
-export function AreaPolygon({ coords, id }: AreaPolygonProps) {
+export function AreaPolygon({ coords, fillColor, id }: AreaPolygonProps) {
   const router = useRouter();
-
+  console.log(fillColor);
   return (
     <Polygon
       eventHandlers={{
@@ -21,6 +22,7 @@ export function AreaPolygon({ coords, id }: AreaPolygonProps) {
           router.push(`${Routes.AREAS}/${id}`);
         },
       }}
+      pathOptions={{ fill: Boolean(fillColor), fillColor, fillOpacity: 0.6 }}
       positions={coords}
     />
   );
