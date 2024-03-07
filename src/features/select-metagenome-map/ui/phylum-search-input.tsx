@@ -1,7 +1,6 @@
 'use client';
 
-import type { ChangeEventHandler } from 'react';
-
+import { type ChangeEventHandler, useTransition } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -14,12 +13,14 @@ type PhylumSearchInput = Readonly<{
 }>;
 
 export function PhylumSearchInput({ selectItems }: PhylumSearchInput) {
-  const [phylumId, setPhylumId] = useSelectedPhylum();
+  const [isLoading, startTransition] = useTransition();
+  const [phylumId, setPhylumId] = useSelectedPhylum({ startTransition });
 
   return (
     <Select
       defaultValue={selectItems.find(({ value }) => value === phylumId)}
       isClearable
+      isDisabled={isLoading}
       isSearchable
       noOptionsMessage={(input) => `Филум ${input.inputValue} не найден`}
       onChange={(value) => void setPhylumId(value?.value ?? 0)}
