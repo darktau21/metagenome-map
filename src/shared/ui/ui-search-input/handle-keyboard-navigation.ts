@@ -1,9 +1,9 @@
-import type { RefObject } from 'react';
+import type { KeyboardEventHandler, RefObject } from 'react';
 
 export const handleKeyboardNavigation = (
   input: RefObject<HTMLInputElement>,
   tips: RefObject<HTMLUListElement>,
-) => {
+): KeyboardEventHandler<HTMLDivElement> => {
   const isTipsSelectorFocused = () =>
     document.activeElement?.parentElement === tips.current;
   const isInputFocused = () => document.activeElement === input.current;
@@ -41,8 +41,8 @@ export const handleKeyboardNavigation = (
     }
   };
 
-  return (e: KeyboardEvent) => {
-    e.preventDefault();
+  return (e) => {
+    e.stopPropagation();
     switch (e.code) {
       case 'ArrowDown':
         focusNextElement();

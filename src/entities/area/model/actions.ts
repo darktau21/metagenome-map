@@ -71,6 +71,9 @@ export async function getAreaCoordsWithPhylum(phylumId: number) {
   const areaCoords = await prisma.areaCoords.findManyWithPhylum(phylumId);
   const phylumValuesDistinct = await prisma.metagenomeProperty.findMany({
     distinct: ['value'],
+    orderBy: {
+      value: 'asc',
+    },
     select: { id: true, value: true },
     where: { phylumId },
   });

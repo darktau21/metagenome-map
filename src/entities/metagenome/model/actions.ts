@@ -39,16 +39,10 @@ export async function getMetagenome(id: number) {
   };
 }
 
-export async function searchPhylum(query: string) {
+export async function getPhylumList() {
   const phylums = await prisma.phylum.findMany({
     orderBy: {
       name: 'asc',
-    },
-    where: {
-      name: {
-        contains: query,
-        mode: 'insensitive',
-      },
     },
   });
 

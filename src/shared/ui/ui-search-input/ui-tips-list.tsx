@@ -41,6 +41,7 @@ export const UITipsList = forwardRef<HTMLUListElement, TipsListProps>(
           >
             <ul
               className="flex flex-col max-h-full scrollbar-thin divide-y-2 overflow-x-hidden cursor-pointer overflow-y-auto"
+              onKeyDown={(e) => e.preventDefault()}
               ref={tipsRef}
             >
               {isLoading ? loadingPlaceholder : null}

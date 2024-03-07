@@ -1,4 +1,4 @@
 export type Phylum = {
-  id: number;
-  name: string;
+  label: string;
+  value: number;
 };

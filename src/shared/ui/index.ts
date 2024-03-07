@@ -15,3 +15,4 @@ export { UISearchInput } from './ui-search-input/ui-search-input';
 export { UISpinnerIcon } from './ui-spinner-icon';
 export { UITooltip } from './ui-tooltip';
 export * from './ui-search-input';
+export { UISelect } from './ui-select';

@@ -53,19 +53,12 @@ export const UISearchInput = memo(function UISearchInput<T>({
   if (tips.length > 1 || (tips.length === 1 && tips[0] !== value))
     searchState = SearchStates.RESULTS_FOUND;
 
-  useEffect(() => {
-    const handler = handleKeyboardNavigation(inputRef, tipsRef);
-    document.addEventListener('keydown', handler);
-
-    return () => document.removeEventListener('keydown', handler);
-  }, []);
-
   return (
     <div
       className="relative"
       onBlur={() => setIsFocused(false)}
-      onClick={(e) => console.log(e.target)}
       onFocus={() => setIsFocused(true)}
+      onKeyDown={handleKeyboardNavigation(inputRef, tipsRef)}
     >
       <form className="relative h-full block" onSubmit={onSubmit}>
         <UIInput
