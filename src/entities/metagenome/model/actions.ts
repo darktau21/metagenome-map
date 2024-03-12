@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/shared/lib';
+import { GRADIENT_FROM, GRADIENT_TO, prisma } from '@/shared/lib';
 
 const convertProperty = ({
   phylum,
@@ -13,7 +13,7 @@ const convertProperty = ({
   value,
 });
 
-export async function getMetagenome(id: number) {
+export async function getPhylum(id: number) {
   const metagenome = await prisma.metagenome.findFirst({
     select: {
       id: true,
@@ -47,4 +47,31 @@ export async function getPhylumList() {
   });
 
   return phylums;
+}
+
+export async function getMinMaxPhylumValues(phylumId: number) {
+  const min = await prisma.metagenomeProperty.aggregate({
+    _min: {
+      value: true,
+    },
+    where: {
+      phylumId,
+    },
+  });
+  const max = await prisma.metagenomeProperty.aggregate({
+    _max: {
+      value: true,
+    },
+    where: {
+      phylumId,
+    },
+  });
+
+  return {
+    fromColor: GRADIENT_FROM,
+    maxValue: max._max.value,
+    minValue: min._min.value,
+    phylumId,
+    toColor: GRADIENT_TO,
+  };
 }

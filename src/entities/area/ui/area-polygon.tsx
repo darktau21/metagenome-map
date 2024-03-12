@@ -4,6 +4,7 @@ import type { LatLng } from '@/shared/types';
 
 import { Routes } from '@/shared/routes';
 import { useRouter } from 'next/navigation';
+import { memo } from 'react';
 import { Polygon, Tooltip } from 'react-leaflet';
 
 type AreaPolygonProps = {
@@ -13,7 +14,7 @@ type AreaPolygonProps = {
   value?: number;
 };
 
-export function AreaPolygon({
+export const AreaPolygon = memo(function AreaPolygon({
   coords,
   fillColor,
   id,
@@ -23,7 +24,7 @@ export function AreaPolygon({
   return (
     <Polygon
       eventHandlers={{
-        click: () => {
+        click: (e) => {
           router.push(`${Routes.AREAS}/${id}`);
         },
       }}
@@ -38,4 +39,4 @@ export function AreaPolygon({
       {fillColor && <Tooltip sticky>Значение филума: {value ?? 0}</Tooltip>}
     </Polygon>
   );
-}
+});

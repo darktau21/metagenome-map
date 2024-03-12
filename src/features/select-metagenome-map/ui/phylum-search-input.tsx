@@ -1,8 +1,8 @@
 'use client';
 
-import { type ChangeEventHandler, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 
 import type { Phylum } from '../types';
 
@@ -15,8 +15,10 @@ type PhylumSearchInput = Readonly<{
 export function PhylumSearchInput({ selectItems }: PhylumSearchInput) {
   const [isLoading, startTransition] = useTransition();
   const [phylumId, setPhylumId] = useSelectedPhylum({ startTransition });
+  const [isMounted, setIsMounted] = useState(false);
 
-  return (
+  useEffect(() => setIsMounted(true), []);
+  return isMounted ? (
     <Select
       defaultValue={selectItems.find(({ value }) => value === phylumId)}
       isClearable
@@ -27,5 +29,7 @@ export function PhylumSearchInput({ selectItems }: PhylumSearchInput) {
       options={selectItems}
       placeholder="Выберите филум"
     />
+  ) : (
+    <Skeleton height={'2rem'} />
   );
 }
