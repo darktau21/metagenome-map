@@ -1,5 +1,7 @@
 import { AreaLoader } from '@/entities/area';
-import { UICardSkeleton, UIHeading } from '@/shared/ui';
+import { Diagram, MetagenomeTable, getMetagenome } from '@/entities/metagenome';
+import { MetagenomeLoader } from '@/entities/metagenome';
+import { UIAccordion, UICardSkeleton, UIHeading } from '@/shared/ui';
 import { AreaCard } from '@/widgets/area-card';
 import { Suspense } from 'react';
 
@@ -12,23 +14,34 @@ export async function AreaPage({ params }: AreaPageProps) {
 
   return (
     <Suspense fallback={<UICardSkeleton />}>
-      <AreaLoader id={+id}>
-        {(area, duplicates) => (
-          <div className="col-start-2 col-end-6">
-            <AreaCard area={area} />
-            {duplicates ? (
-              <>
-                <UIHeading as="h2" classNames="col-start-2 col-end-6">
-                  Территории с совпадающими координатами
-                </UIHeading>
-                {duplicates.map((area) => (
-                  <AreaCard area={area} key={area.id} />
-                ))}
-              </>
-            ) : null}
-          </div>
+      <MetagenomeLoader areaId={+id}>
+        {(properties) => (
+          <AreaLoader id={+id}>
+            {(area, duplicates) => (
+              <div className="col-start-2 col-end-6">
+                <AreaCard area={area}>
+                  <UIAccordion title={<UIHeading as="h3">Метагеном</UIHeading>}>
+                    <MetagenomeTable properties={properties} />
+                  </UIAccordion>
+                  <UIAccordion title={<UIHeading as="h3">Диаграмма</UIHeading>}>
+                    <Diagram areaId={+id} />
+                  </UIAccordion>
+                </AreaCard>
+                {duplicates ? (
+                  <>
+                    <UIHeading as="h2" classNames="col-start-2 col-end-6">
+                      Территории с совпадающими координатами
+                    </UIHeading>
+                    {duplicates.map((area) => (
+                      <AreaCard area={area} key={area.id} />
+                    ))}
+                  </>
+                ) : null}
+              </div>
+            )}
+          </AreaLoader>
         )}
-      </AreaLoader>
+      </MetagenomeLoader>
     </Suspense>
   );
 }

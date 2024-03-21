@@ -16,3 +16,4 @@ export { UISpinnerIcon } from './ui-spinner-icon';
 export { UITooltip } from './ui-tooltip';
 export * from './ui-search-input';
 export { UISelect } from './ui-select';
+export * from './ui-table';

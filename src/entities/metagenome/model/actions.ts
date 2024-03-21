@@ -75,3 +75,23 @@ export async function getMinMaxPhylumValues(phylumId: number) {
     toColor: GRADIENT_TO,
   };
 }
+
+export async function getMetagenome(areaId: number) {
+  const res = await prisma.metagenome.findFirst({
+    select: {
+      properties: {
+        select: {
+          phylum: {
+            select: {
+              name: true,
+            },
+          },
+          value: true,
+        },
+      },
+    },
+    where: { areas: { some: { id: areaId } } },
+  });
+
+  return res?.properties.map(convertProperty) ?? [];
+}

@@ -7,3 +7,8 @@ export type MinMaxPhylum = {
   maxValue: number;
   minValue: number;
 };
+
+export type MetagenomeValue = {
+  name: string;
+  value: number;
+}

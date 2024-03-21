@@ -144,3 +144,11 @@ export async function getDuplicatedCoordsArea(
 
   return areas.map(convertAreaData);
 }
+
+export async function getDiagram(areaId: number) {
+  const res = await prisma.diagram.findFirst({
+    where: { metagenome: { areas: { some: { id: areaId } } } },
+  });
+
+  return res?.content ?? '';
+}

@@ -1,5 +1,5 @@
 'use client';
-import { type Variants, motion } from 'framer-motion';
+import { AnimatePresence, type Variants, motion } from 'framer-motion';
 import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
@@ -45,10 +45,11 @@ export function UIAccordion({
       <motion.div
         animate={variant}
         className="overflow-hidden px-4"
+        exit={variant}
         initial={variant}
         variants={accordionVariants}
       >
-        {children}
+        <AnimatePresence>{isOpened ? children : null}</AnimatePresence>
       </motion.div>
     </div>
   );

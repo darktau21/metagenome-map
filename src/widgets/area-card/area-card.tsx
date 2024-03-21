@@ -1,4 +1,5 @@
 import type { Area } from '@/entities/area';
+import type { PropsWithChildren } from 'react';
 
 import {
   GroupedPropValueList,
@@ -7,12 +8,14 @@ import {
 } from '@/entities/property';
 import { UIAccordion, UICard, UIHeading } from '@/shared/ui';
 
-type AreaCardProps = Readonly<{
-  area: Area;
-}>;
+type AreaCardProps = Readonly<
+  PropsWithChildren<{
+    area: Area;
+  }>
+>;
 
-export function AreaCard({ area }: AreaCardProps) {
-  const { id, metagenomeId, properties: groupedProperties } = area;
+export function AreaCard({ area, children }: AreaCardProps) {
+  const { id, properties: groupedProperties } = area;
   return (
     <UICard>
       <UIHeading>Территория #{id}</UIHeading>
@@ -32,6 +35,7 @@ export function AreaCard({ area }: AreaCardProps) {
           )}
         />
       ) : null}
+      {children}
     </UICard>
   );
 }
